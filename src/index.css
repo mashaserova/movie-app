@@ -12,6 +12,9 @@
     padding-inline-start: 0px;
     gap: 40px;
 }
+.film-list_hidden {
+    display: none;
+}
 .film-list__item {
     box-shadow: 0 0 12px 0px #00000026;
     display: flex;
@@ -62,7 +65,7 @@
 }
 
 .tabs-list {
-    width: 150px;
+    width: 146px;
     margin: 0 auto;
     display: flex;
     gap: 16px;

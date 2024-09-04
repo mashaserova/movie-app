@@ -1,51 +1,35 @@
-import React, {useState} from 'react'
+import React, {useState} from 'react';
+import { Tabs, Pagination } from "antd";
 
-const Header = ( {updateMovies} ) => {
-    const api = '0d1df680d6649766863c6c9909fc939b';
+const Header = ( { updateActiveTab, currentPage, updateCurrentPage, onSearchSubmit, totalResults } ) => {
     const [query, setQuery] = useState(''); //строка для инпута
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const urlForMovieData = `https://api.themoviedb.org/3/search/movie?api_key=${api}&query=${query}`
-        const urlForGenresIds = `https://api.themoviedb.org/3/genre/movie/list?api_key=${api}&language=en-US`
-        try {
-            const [responseMovies, responseGenres] = await Promise.all([
-                fetch(urlForMovieData),
-                fetch(urlForGenresIds),
-            ]);
-            const dataMovies = await responseMovies.json();
-            const dataGenres = await responseGenres.json();
-            for (let i = 0; i < dataMovies.results.length; i++) {
-                const movie = dataMovies.results[i];
-                const genreNames = [];
-
-                for (let j = 0; j < movie.genre_ids.length; j++) {
-                    const genreId = movie.genre_ids[j]; //id одного из жанров одного фильма
-                    
-                    for (let k = 0; k < dataGenres.genres.length; k++) {
-                        const genre = dataGenres.genres[k];
-                        if (genre.id === genreId) {
-                            genreNames.push(genre.name);
-                            break;
-                        }
-                    }
-                }
-                movie.genre_names = genreNames;
-                delete movie.genre_ids;
-            }
-
-            updateMovies(dataMovies.results)
-            console.log(dataMovies.results);
-        } catch (error) {
-            console.error("Ошибка", error)
-        }
-    }
+        onSearchSubmit(query);
+    };
+    const handlePageChange = (currentPage) => {
+        updateCurrentPage(currentPage);
+    };
     return (
         <header>
-            <div className="tabs-list">
-                <div className="tabs-list__item">Search</div>
-                <div className="tabs-list__item">Rated</div>
-            </div>
+            <Tabs
+                className='tabs-list'
+                defaultActiveKey='1'
+                onChange={(key) => updateActiveTab(key)}
+                items={[
+                    {
+                        label: 'Search',
+                        key: 'search',
+                        className: 'tabs-list__item',
+                    },
+                    {
+                        label: 'Rated',
+                        key: 'rated',
+                        className: 'tabs-list__item'
+                    }
+                ]}
+            />
             <form onSubmit={handleSubmit}>
                 <input
                     className="search"
@@ -54,6 +38,15 @@ const Header = ( {updateMovies} ) => {
                     onChange={(event) => {setQuery(event.target.value)}}
                 />
             </form>
+            {totalResults > 0 && (
+                <Pagination
+                    current={currentPage}
+                    onChange={handlePageChange}
+                    total={totalResults}
+                    showSizeChanger={false}
+                    pageSize={20}
+                />
+            )}
         </header>
     )
 }
