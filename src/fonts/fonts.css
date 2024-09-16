@@ -1,0 +1,11 @@
+@font-face {
+    font-family: Iner;
+    font-weight: 500;
+    font-style: normal;
+    src:
+        local('Iner'),
+        url('./Inter-Medium.ttf') format('ttf'),
+        url('./Iner-Medium.woff2') format('woff2'),
+        url('./Iner-Medium.woff') format('woff');
+    font-display: swap;
+}

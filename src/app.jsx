@@ -3,7 +3,6 @@ import { Spin } from 'antd';
 import { Alert } from 'antd';
 import Header from './components/header/header';
 import Main from './components/main/main';
-import Footer from './components/footer/footer';
 import { debounce } from 'lodash';
 
 const App = () => {
@@ -17,8 +16,8 @@ const App = () => {
     const [isOffline, setIsOffline] = useState(false);
     const api = '0d1df680d6649766863c6c9909fc939b';
 
-    const fetchMovies = async (currentPage, query = '') => {
-        const urlForMovieData = `https://api.themoviedb.org/3/search/movie?api_key=${api}&query=${query}&page=${currentPage}`;
+    const fetchMovies = async (currentPage, currenQuery) => {
+        const urlForMovieData = `https://api.themoviedb.org/3/search/movie?api_key=${api}&query=${currenQuery}&page=${currentPage}`;
         const urlForGenresIds = `https://api.themoviedb.org/3/genre/movie/list?api_key=${api}&language=en-US`;
         setIsLoading(true);
         try {
@@ -33,7 +32,7 @@ const App = () => {
                     const movie = dataMovies.results[i];
                     const genreNames = [];
                     for (let j = 0; j < movie.genre_ids.length; j++) {
-                        const genreId = movie.genre_ids[j]; //id одного из жанров одного фильма
+                        const genreId = movie.genre_ids[j]; //идем по id жанров в фильме
                         for (let k = 0; k < dataGenres.genres.length; k++) {
                             const genre = dataGenres.genres[k];
                             if (genre.id === genreId) {
@@ -42,6 +41,7 @@ const App = () => {
                             }
                         }
                     }
+                    setError(null);
                     movie.genre_names = genreNames;
                     delete movie.genre_ids;
                 }
@@ -53,7 +53,11 @@ const App = () => {
                 setTotalResults(0);
             }
         } catch (error) {
-            setError(error.message);
+            if (error.response && error.response.status >= 500) {
+                setError(error.message);
+            } else {
+                setError('Error while load data');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -71,7 +75,12 @@ const App = () => {
     const handleSearchSubmit = (currentQuery) => {
         setCurrentQuery(currentQuery);
         setCurrentPage(1); //сброс страницы на первую при новом поисковом запросе
-        fetchMovies(1, currentQuery);
+        if (currentPage) {
+            fetchMovies(1, currentQuery);
+        } else {
+            setMovies([]);
+            setTotalResults(0);
+        }
     };
     const debouncedSearch = useCallback(
         debounce((currentQuery) => {
@@ -79,10 +88,6 @@ const App = () => {
         }, 300),
         []
     );
-    useEffect(() => {
-        fetchMovies(currentPage, currentQuery);
-    }, [currentPage, currentQuery]);
-
     useEffect(() => {
         const handlePageStatus = () => {
             setIsOffline(!navigator.onLine);
@@ -98,29 +103,41 @@ const App = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (currentQuery) {
+            fetchMovies(currentPage, currentQuery);
+        }
+    }, [currentPage, currentQuery]);
+
     return (
         <div className="container">
             <Header
+                activeTab={activeTab}
                 updateActiveTab={updateActiveTab}
                 onSearchSubmit={debouncedSearch}
             />
-            {error && (
-                <Alert
-                    message="Error"
-                    description={error}
-                    type="error"
-                    showIcon
-                    closable
-                    onClose={() => setError(null)}
-                />
+            {error && activeTab === 'search' && (
+                <div className="d">
+                    <Alert
+                        className="alert-container"
+                        message="Error"
+                        description={error}
+                        type="error"
+                        showIcon
+                        closable
+                        onClose={() => setError(null)}
+                    />
+                </div>
             )}
-            {isOffline && (
-                <Alert
-                    message="No internet connection"
-                    description="Please, check your connection and try again"
-                    type="warning"
-                    showIcon
-                />
+            {isOffline && activeTab === 'search' && (
+                <div className="alert-container">
+                    <Alert
+                        message="No internet connection"
+                        description="Please, check your connection and try again"
+                        type="warning"
+                        showIcon
+                    />
+                </div>
             )}
             {isLoading ? (
                 <div className="spinner-container">
@@ -131,9 +148,6 @@ const App = () => {
                     <Main
                         movies={movies}
                         activeTab={activeTab}
-                        currentPage={currentPage}
-                    />
-                    <Footer
                         currentPage={currentPage}
                         updateCurrentPage={updateCurrentPage}
                         totalResults={totalResults}

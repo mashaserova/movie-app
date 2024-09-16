@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Tabs } from 'antd';
 
-const Header = ({ updateActiveTab, onSearchSubmit }) => {
+const Header = ({ activeTab, updateActiveTab, onSearchSubmit }) => {
     const [query, setQuery] = useState(''); //строка для инпута
 
     const handleChange = async (event) => {
+        onSearchSubmit(event.target.value);
         setQuery(event.target.value);
-        onSearchSubmit(query);
     };
     return (
         <header>
@@ -27,15 +27,17 @@ const Header = ({ updateActiveTab, onSearchSubmit }) => {
                     },
                 ]}
             />
-            <form>
-                <input
-                    className="search"
-                    id="search"
-                    placeholder="What movie are u looking for?"
-                    value={query}
-                    onInput={handleChange}
-                />
-            </form>
+            {activeTab === 'search' && (
+                <form>
+                    <input
+                        className="search"
+                        id="search"
+                        placeholder="What movie are u looking for?"
+                        value={query}
+                        onInput={handleChange}
+                    />
+                </form>
+            )}
         </header>
     );
 };

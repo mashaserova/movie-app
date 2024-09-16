@@ -1,0 +1,79 @@
+.film-list__item {
+    box-shadow: 0 0 12px 0px #00000026;
+    display: flex;
+    width: 451px;
+    height: 280px;
+}
+
+.film-card__image {
+    width: 183px;
+    height: 281px;
+}
+
+.film-card__content {
+    font-family: Iner;
+    margin-left: 20px;
+    position: relative
+}
+
+.film-card__title {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 28px;
+    margin: 10px 0 7px 0;
+    width: 200px;
+}
+
+.film-card__vote-average {
+    font-size: 12px;
+    line-height: 22px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 30px;
+    height: 30px;
+}
+
+.film-card__release-date {
+    color: #827e7e;
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    margin-bottom: 9px;
+}
+
+.film-card__genre {
+    color: #827e7e;
+    display: inline-block;
+    padding: 0 5px;
+    margin-right: 5px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    background-color: #fafafa;
+}
+
+.film-card__description {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    margin-top: 7px;
+}
+
+.film-card__rating-stars {
+    font-size: 16px;
+    position: absolute;
+    bottom: 20px;
+}
+
+.pagination-list {
+    width: 204px;
+    margin: 0 auto;
+}
