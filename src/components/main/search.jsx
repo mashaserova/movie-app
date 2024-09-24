@@ -4,7 +4,7 @@ import FilmCard from './filmCard';
 
 const Search = ({
     movies,
-    movieRatings,
+    ratedMovies,
     handleRateMovies,
     currentPage,
     handlePageChange,
@@ -14,8 +14,7 @@ const Search = ({
         <>
             <ul className="film-list" id="film-list">
                 {movies.map((movie) => {
-                    // Находим рейтинг фильма в movieRatings
-                    const movieRating = movieRatings.find(
+                    const movieRating = ratedMovies.find(
                         (ratedMovie) => ratedMovie.id === movie.id
                     )?.rating;
 

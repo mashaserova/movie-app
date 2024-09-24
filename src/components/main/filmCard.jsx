@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Rate } from 'antd';
 import { format } from 'date-fns';
 import defaultImage from '../../assets/images/default-image.jpg';
+import { GenreContext } from '../../context/genreContext';
 
 const FilmCard = ({ movie, movieRating, handleRateMovies }) => {
+    const genres = useContext(GenreContext);
     const formattedDate = (unformattedDate) => {
         if (!unformattedDate) {
             return 'Invalid date format';
@@ -71,13 +73,12 @@ const FilmCard = ({ movie, movieRating, handleRateMovies }) => {
                 <time className="film-card__release-date">
                     {formattedDate(movie.release_date)}
                 </time>
-                {movie.genre_names.map((genreName) => {
-                    return (
-                        <span key={genreName} className="film-card__genre">
-                            {genreName}
+                {movie.genre_ids &&
+                    movie.genre_ids.map((genreId) => (
+                        <span key={genreId} className="film-card__genre">
+                            {genres[genreId]}
                         </span>
-                    );
-                })}
+                    ))}
                 <p className="film-card__description">
                     {croppedText(movie.overview)}
                 </p>

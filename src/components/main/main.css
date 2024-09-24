@@ -81,14 +81,14 @@
     margin: 0 auto;
 }
 .vote-average__awfull {
-    border-color: #E90000;
+    border-color: #e90000;
 }
 .vote-average__bad {
-    border-color: #E97E00;
+    border-color: #e97e00;
 }
 .vote-average__fine {
-    border-color: #E9D100;
+    border-color: #e9d100;
 }
 .vote-average__good {
-    border-color: #66E900;
+    border-color: #66e900;
 }
