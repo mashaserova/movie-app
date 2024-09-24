@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
-import { Rate, Pagination } from 'antd';
+import { Pagination } from 'antd';
+import FilmCard from './filmCard';
 
-const Rated = ({
-    movieRatings,
-    handleRateMovies,
-    formattedDate,
-    croppedText,
-    truncateToOneDecimal,
-    getRatingColor,
-}) => {
+const Rated = ({ movieRatings, handleRateMovies }) => {
     const [currentRatedPage, setCurrentRatedPage] = useState(1);
     const handleRatedPageChange = (currentRatedPage) => {
         setCurrentRatedPage(currentRatedPage);
@@ -22,52 +16,12 @@ const Rated = ({
         <>
             <ul className="film-list" id="film-list">
                 {moviesToDisplay.map((movie) => (
-                    <li key={movie.id} className="film-list__item film-card">
-                        <img
-                            className="film-card__image"
-                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                            alt={movie.title}
-                        />
-                        <div className="film-card__content">
-                            <h1 className="film-card__title">{movie.title}</h1>
-                            <span
-                                className="film-card__vote-average"
-                                style={{
-                                    border: `2px solid ${getRatingColor(
-                                        movie.vote_average
-                                    )}`,
-                                    borderRadius: '50%',
-                                }}
-                            >
-                                {truncateToOneDecimal(movie.vote_average)}
-                            </span>
-                            <time className="film-card__release-date">
-                                {formattedDate(movie.release_date)}
-                            </time>
-                            {movie.genre_names.map((genreName) => {
-                                return (
-                                    <span
-                                        key={genreName}
-                                        className="film-card__genre"
-                                    >
-                                        {genreName}
-                                    </span>
-                                );
-                            })}
-                            <p className="film-card__description">
-                                {croppedText(movie.overview)}
-                            </p>
-                            <Rate
-                                className="film-card__rating-stars"
-                                count={10}
-                                allowHalf
-                                value={movie.rating}
-                                onChange={(newRating) =>
-                                    handleRateMovies(movie.id, newRating)
-                                }
-                            />
-                        </div>
-                    </li>
+                    <FilmCard
+                        key={movie.id}
+                        movie={movie}
+                        movieRating={movie.rating}
+                        handleRateMovies={handleRateMovies}
+                    />
                 ))}
             </ul>
             {movieRatings.length > 0 && (

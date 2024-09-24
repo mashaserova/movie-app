@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Spin } from 'antd';
 import { Alert } from 'antd';
-import Header from './components/header/header';
-import Main from './components/main/main';
+import Header from '../components/header/header';
+import Main from '../components/main/main';
 import { debounce } from 'lodash';
 
 const App = () => {
@@ -14,11 +14,12 @@ const App = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isOffline, setIsOffline] = useState(false);
-    const api = '0d1df680d6649766863c6c9909fc939b';
+    const api = 'dc7a5a8df772eb4fd2c6c531749cda56';
+    const baseUrl = 'https://api.themoviedb.org/3/';
 
     const fetchMovies = async (currentPage, currenQuery) => {
-        const urlForMovieData = `https://api.themoviedb.org/3/search/movie?api_key=${api}&query=${currenQuery}&page=${currentPage}`;
-        const urlForGenresIds = `https://api.themoviedb.org/3/genre/movie/list?api_key=${api}&language=en-US`;
+        const urlForMovieData = `${baseUrl}search/movie?api_key=${api}&query=${currenQuery}&page=${currentPage}`;
+        const urlForGenresIds = `${baseUrl}genre/movie/list?api_key=${api}&language=en-US`;
         setIsLoading(true);
         try {
             const [responseMovies, responseGenres] = await Promise.all([

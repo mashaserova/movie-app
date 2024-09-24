@@ -13,7 +13,8 @@
 .film-card__content {
     font-family: Iner;
     margin-left: 20px;
-    position: relative
+    position: relative;
+    width: 268px;
 }
 
 .film-card__title {
@@ -35,6 +36,8 @@
     top: 12px;
     width: 30px;
     height: 30px;
+    border: 2px solid;
+    border-radius: 50%;
 }
 
 .film-card__release-date {
@@ -76,4 +79,16 @@
 .pagination-list {
     width: 204px;
     margin: 0 auto;
+}
+.vote-average__awfull {
+    border-color: #E90000;
+}
+.vote-average__bad {
+    border-color: #E97E00;
+}
+.vote-average__fine {
+    border-color: #E9D100;
+}
+.vote-average__good {
+    border-color: #66E900;
 }

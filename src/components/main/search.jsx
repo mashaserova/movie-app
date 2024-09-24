@@ -1,18 +1,14 @@
 import React from 'react';
-import { Rate, Pagination } from 'antd';
-import defaultImage from './default-image.jpg';
+import { Pagination } from 'antd';
+import FilmCard from './filmCard';
 
 const Search = ({
     movies,
     movieRatings,
     handleRateMovies,
-    formattedDate,
-    croppedText,
     currentPage,
     handlePageChange,
     totalResults,
-    truncateToOneDecimal,
-    getRatingColor,
 }) => {
     return (
         <>
@@ -24,61 +20,12 @@ const Search = ({
                     )?.rating;
 
                     return (
-                        <li
+                        <FilmCard
                             key={movie.id}
-                            className="film-list__item film-card"
-                        >
-                            <img
-                                className="film-card__image"
-                                src={
-                                    movie.poster_path
-                                        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                                        : defaultImage
-                                }
-                                alt={movie.title}
-                            />
-                            <div className="film-card__content">
-                                <h1 className="film-card__title">
-                                    {movie.title}
-                                </h1>
-                                <span
-                                    className="film-card__vote-average"
-                                    style={{
-                                        border: `2px solid ${getRatingColor(
-                                            movie.vote_average
-                                        )}`,
-                                        borderRadius: '50%',
-                                    }}
-                                >
-                                    {truncateToOneDecimal(movie.vote_average)}
-                                </span>
-                                <time className="film-card__release-date">
-                                    {formattedDate(movie.release_date)}
-                                </time>
-                                {movie.genre_names.map((genreName) => {
-                                    return (
-                                        <span
-                                            key={genreName}
-                                            className="film-card__genre"
-                                        >
-                                            {genreName}
-                                        </span>
-                                    );
-                                })}
-                                <p className="film-card__description">
-                                    {croppedText(movie.overview)}
-                                </p>
-                                <Rate
-                                    className="film-card__rating-stars"
-                                    count={10}
-                                    allowHalf
-                                    value={movieRating || 0}
-                                    onChange={(newRating) =>
-                                        handleRateMovies(movie.id, newRating)
-                                    }
-                                />
-                            </div>
-                        </li>
+                            movie={movie}
+                            movieRating={movieRating}
+                            handleRateMovies={handleRateMovies}
+                        />
                     );
                 })}
             </ul>
