@@ -109,10 +109,6 @@ const App = () => {
         }, 300),
         []
     );
-    useEffect(() => {
-        console.log(ratedMovies);
-    }, [ratedMovies]);
-
     return (
         <div className="container">
             <Header
