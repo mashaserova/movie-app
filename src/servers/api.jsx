@@ -1,15 +1,12 @@
-// servers/api.js
 const api = 'dc7a5a8df772eb4fd2c6c531749cda56';
 const baseUrl = 'https://api.themoviedb.org/3/';
 
 const handleError = (error) => {
     let errorMessage = 'An unknown error occurred.';
 
-    // Проверяем на наличие ошибки сети (NetworkError)
     if (error.message && error.message.startsWith('NetworkError')) {
         errorMessage = 'Network problems. Please check your connection.';
     } else if (error.response) {
-        // Ошибка сетевого запроса
         switch (error.response.status) {
             case 404:
                 errorMessage = 'Resource not found.';
@@ -34,6 +31,7 @@ const createGuestSession = async () => {
         );
         const data = await response.json();
         if (data.success) {
+            console.log('Guest session created:', data.guest_session_id);
             return data.guest_session_id;
         } else {
             throw new Error(
@@ -72,13 +70,27 @@ const fetchRatedMovies = async (sessionId) => {
         );
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
-        } else {
-            const data = await response.json();
-            return data.results.map((movie) => ({
-                ...movie,
-                rating: movie.rating,
-            }));
         }
+
+        const data = await response.json();
+        const ratedMovies = data.results;
+
+        const detailedRatedMovies = await Promise.all(
+            ratedMovies.map(async (movie) => {
+                const movieDetails = await fetch(
+                    `${baseUrl}movie/${movie.id}?api_key=${api}&language=en-US`
+                );
+                if (!movieDetails.ok) {
+                    throw new Error(
+                        `HTTP error! Status: ${movieDetails.status}`
+                    );
+                }
+                const detailsData = await movieDetails.json();
+                return { ...detailsData, rating: movie.rating };
+            })
+        );
+
+        return detailedRatedMovies;
     } catch (error) {
         handleError(error);
     }

@@ -18,7 +18,7 @@ const FilmCard = ({ movie, movieRating, handleRateMovies }) => {
         }
     };
 
-    const croppedText = (uncropptedText) => {
+    const croppedText = (uncropptedText = '') => {
         const maxLength = 150;
         const ellipsis = '...';
 
@@ -86,7 +86,7 @@ const FilmCard = ({ movie, movieRating, handleRateMovies }) => {
                     className="film-card__rating-stars"
                     count={10}
                     allowHalf
-                    value={movieRating || 0}
+                    value={movieRating}
                     onChange={(newRating) =>
                         handleRateMovies(movie.id, newRating)
                     }

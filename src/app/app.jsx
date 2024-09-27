@@ -3,6 +3,7 @@ import { Spin } from 'antd';
 import { Alert } from 'antd';
 import Header from '../components/header/header';
 import Main from '../components/main/main';
+import Footer from '../components/footer/footer';
 import { debounce } from 'lodash';
 import * as api from '../servers/api';
 const App = () => {
@@ -31,40 +32,16 @@ const App = () => {
         }
     }, []);
 
-    const rateMovie = useCallback(
-        async (movieId, rating) => {
-            if (!guestSessionId) {
-                await createGuestSession();
-                return;
-            }
-            try {
-                await api.rateMovie(movieId, rating, guestSessionId);
-                setRatedMovies((prevRatedMovies) => {
-                    const existingMovieIndex = prevRatedMovies.findIndex(
-                        (movie) => movie.id === movieId
-                    );
-                    if (existingMovieIndex !== -1) {
-                        const updatedMovies = [...prevRatedMovies];
-                        updatedMovies[existingMovieIndex].rating = rating;
-                        return updatedMovies;
-                    } else {
-                        const movie = movies.find((m) => m.id === movieId);
-                        return [...prevRatedMovies, { ...movie, rating }];
-                    }
-                });
-            } catch (error) {
-                handleError(error);
-            }
-        },
-        [guestSessionId]
-    );
-
     const fetchRatedMovies = useCallback(async (sessionId) => {
+        setIsLoading(true);
         try {
             const ratedMoviesData = await api.fetchRatedMovies(sessionId);
             setRatedMovies(ratedMoviesData);
         } catch (error) {
             handleError(error);
+            setRatedMovies([]);
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
@@ -77,6 +54,24 @@ const App = () => {
             createGuestSession();
         }
     }, []);
+
+    const rateMovie = useCallback(
+        async (movieId, rating) => {
+            if (!guestSessionId) {
+                await createGuestSession();
+                return;
+            }
+            try {
+                await api.rateMovie(movieId, rating, guestSessionId);
+                const updatedRatedMovies =
+                    await api.fetchRatedMovies(guestSessionId);
+                setRatedMovies(updatedRatedMovies);
+            } catch (error) {
+                handleError(error);
+            }
+        },
+        [guestSessionId, fetchRatedMovies]
+    );
 
     const fetchMovies = useCallback(async (currentPage, currenQuery) => {
         setIsLoading(true);
@@ -114,6 +109,9 @@ const App = () => {
         }, 300),
         []
     );
+    useEffect(() => {
+        console.log(ratedMovies);
+    }, [ratedMovies]);
 
     return (
         <div className="container">
@@ -140,15 +138,24 @@ const App = () => {
                             <Spin size="large" />
                         </div>
                     ) : (
-                        <Main
-                            movies={movies}
-                            activeTab={activeTab}
-                            currentPage={currentPage}
-                            updateCurrentPage={updateCurrentPage}
-                            totalResults={totalResults}
-                            rateMovie={rateMovie}
-                            ratedMovies={ratedMovies}
-                        />
+                        <>
+                            <Main
+                                movies={movies}
+                                activeTab={activeTab}
+                                currentPage={currentPage}
+                                totalResults={totalResults}
+                                rateMovie={rateMovie}
+                                ratedMovies={ratedMovies}
+                            />
+                            <Footer
+                                movies={movies}
+                                ratedMovies={ratedMovies}
+                                activeTab={activeTab}
+                                currentPage={currentPage}
+                                updateCurrentPage={updateCurrentPage}
+                                totalResults={totalResults}
+                            />
+                        </>
                     )}
                 </>
             )}
